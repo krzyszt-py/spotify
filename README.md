@@ -1,5 +1,5 @@
 # system packages:
-* libdbus-glib-1-dev
+* libsystemd-dev
 
 # install
 ```bash
