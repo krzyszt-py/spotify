@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="pl">
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="10">
+    <style>
+        .div-table{
+        display:table;
+        width:auto;
+        background-color:#eee;
+        border:1px solid  #666666;
+        border-spacing:5px;/*cellspacing:poor IE support for  this*/
+        }
+        .div-table-row{
+        display:table-row;
+        width:auto;
+        clear:both;
+        background-color:#ccc;
+        }
+        .div-table-col{
+        float:left;/*fix for  buggy browsers*/
+        display:table-column;
+        min-width:120px;
+        }
+    </style>
+    <script type="text/javascript">
+
+    </script>
+    <title>{{ metadata['xesam:title'] }}</title>
+</head>
+<body>
+<div class="div-table">
+    <div class="div-table-row">
+        <div class="div-table-col">Title:</div>
+        <div class="div-table-col">{{ metadata['xesam:title'] }}</div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col">Album:</div>
+        <div class="div-table-col">{{ metadata['xesam:album'] }}</div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col">Artists:</div>
+        <div class="div-table-col">{{ metadata['xesam:artist']|join(', ') }}</div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col">Length:</div>
+        <div class="div-table-col">{{ metadata['length_m'] }}:{{ metadata['length_s'] }}</div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col">Track:</div>
+        <div class="div-table-col">{{ metadata['xesam:trackNumber'] }}</div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col">Disc:</div>
+        <div class="div-table-col">{{ metadata['xesam:discNumber'] }}</div>
+    </div>
+    <!--
+    <div class="div-table-row">
+        <div class="div-table-col">More:</div>
+        <div class="div-table-col">
+            <a href="{{ metadata['krzyszt:api'] }}">API</a><br/>
+            <a href="{{ metadata['krzyszt:url'] }}">URL</a><br/>
+        </div>
+    </div>
+    -->
+</div>
+<!--<a href="{{ metadata['xesam:url'] }}">{{ metadata['krzyszt:play'] }}</a><br/><br/>-->
+
+<!--<a href="/history/0">older &gt;&gt;&gt;</a>-->
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+
+<title>Flask</title>
+<style>
+    .div-table{
+    display:table;
+    width:auto;
+    background-color:#eee;
+    border:1px solid  #666666;
+    border-spacing:5px;/*cellspacing:poor IE support for  this*/
+    }
+    .div-table-row{
+    display:table-row;
+    width:auto;
+    clear:both;
+    background-color:#ccc;
+    }
+    .div-table-col{
+    float:left;/*fix for  buggy browsers*/
+    display:table-column;
+    width:300px;
+    }
+</style>
+</head>
+<body>
+<div class="div-table">
+    <div class="div-table-row">
+        <div class="div-table-col">Lp:</div><div class="div-table-col">Time:</div><div class="div-table-col">Title:</div><div class="div-table-col">Album:</div><div class="div-table-col">Artist:</div>
+    </div>
+    {% for row in data %}
+    <div class="div-table-row">
+        {% set track_id = row[1]['mpris:trackid'][-22:] %}
+        <div style="width:50px" class="div-table-col"><a href="/{{ track_id }}">{{ row.0 }}</a></div><div style="width:350px" class="div-table-col">{{ row.1.time }}</div><div class="div-table-col">{{ row[1]['xesam:title'] }}</div><div class="div-table-col">{{ row[1]['xesam:album'] }}</div><div class="div-table-col">{{ row[1]['xesam:artist']|join(', ') }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% if not first %}
+    <a href="/history/{{ page - 1 }}"> &lt;&lt;&lt; newer</a>
+{% else %}
+    <a href="/">now</a>
+{% endif %}
+{% if not last %}
+    <a href="/history/{{ page + 1 }}"> older &gt;&gt;&gt; </a>
+{% endif %}
+</div>
+</body>
+</html>
