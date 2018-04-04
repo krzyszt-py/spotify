@@ -1,9 +1,12 @@
+from pprint import pprint
 from typing import Dict, List, Any
 
 import adbus
 from sanic import Sanic
 from sanic.response import text as response_text
 from sanic_jinja2 import SanicJinja2
+
+import radio
 
 app = Sanic(__name__)
 jinja = SanicJinja2(app)
@@ -14,20 +17,31 @@ app.proxy: adbus.client.Proxy
 @app.listener('before_server_start')
 async def setup_dbus(app, _loop):
     service = adbus.Service(bus='session')
-    app.proxy = adbus.client.Proxy(service,
-                                   'org.mpris.MediaPlayer2.spotify',
-                                   '/org/mpris/MediaPlayer2',
-                                   interface='org.mpris.MediaPlayer2.Player')
-    app.proxy_listen = adbus.client.Proxy(service,
-                                          'org.mpris.MediaPlayer2.spotify',
-                                          '/org/mpris/MediaPlayer2',
-                                          interface='org.freedesktop.DBus.Properties')
+    app.proxy = adbus.client.Proxy(
+        service,
+        'org.mpris.MediaPlayer2.spotify',
+        '/org/mpris/MediaPlayer2',
+        interface='org.mpris.MediaPlayer2.Player')
+    app.proxy_listen = adbus.client.Proxy(
+        service,
+        'org.mpris.MediaPlayer2.spotify',
+        '/org/mpris/MediaPlayer2',
+        interface='org.freedesktop.DBus.Properties')
+    app.playing = ''
 
     await app.proxy.update()
     await app.proxy_listen.update()
 
     async def local_method(_a: str, metadata: Dict[str, Any], _c: List[str]):
-        print(metadata)
+        pprint(metadata)
+        metadata = metadata['Metadata']
+        if app.playing == metadata['mpris:trackid']:
+            return
+        app.playing = metadata['mpris:trackid']
+        search = radio.search(f"{metadata['xesam:album']} {metadata['xesam:title']}")
+        pprint(search)
+        radio.play(search[0])
+
         # TODO:
         # - radio.search(title)
         # - radio.play(youtube_id)
@@ -38,6 +52,12 @@ async def setup_dbus(app, _loop):
 @app.route('/play')
 async def play(_r):
     await app.proxy.PlayPause()
+    return response_text('', 204)
+
+
+@app.route('/robots.txt')
+@app.route('/favicon.ico')
+async def pass_(_r):
     return response_text('', 204)
 
 
@@ -57,4 +77,4 @@ async def index(_r):
     return response_text('', 204)
 
 
-app.run()
+app.run(debug=True, port=3564)

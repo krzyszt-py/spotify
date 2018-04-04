@@ -1,6 +1,7 @@
 import json
 import requests
-
+import urllib
+import config
 
 def play(id="s2o4zxtqNZ4"):
     session = requests.sessions.Session()
@@ -16,6 +17,11 @@ def play(id="s2o4zxtqNZ4"):
                      data=json.dumps({"mediaServiceId": "youtube", "mediaId": id}))
     assert p.status_code == 201
 
-def search(q=''):
-    r = requests.get()
-    # https: // www.google.pl / search?q = La + Di + Da + Di
+
+def search(q='The Red Thread Unravel (EA Games Soundtrack)'):
+    r = requests.get('https://www.googleapis.com/youtube/v3/search',
+                     params=f"q={urllib.parse.quote(q)}&maxResults=25&part=snippet&key={config.YOUR_API_KEY}")
+    print(r.status_code)
+    print(r.json())
+
+    return [v['id']['videoId'] for v in r.json()['items'] if 'videoId' in v['id']]
