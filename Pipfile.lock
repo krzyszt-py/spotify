@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8ada28464c62a3aa15ff912d9f47c81c5b00038cc918ef93dc5d8febaddb6c75"
+            "sha256": "9f033655962f30ce0c00c84d8221f8f2f665df65816180dd86763a67754b0475"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -25,16 +25,6 @@
                 "sha256:852a493a877b73e11823bfd4e8e5ef2610d70d12c9eaed961bcd9124d8de8c10"
             ],
             "version": "==0.3.2"
-        },
-        "asyncio": {
-            "hashes": [
-                "sha256:83360ff8bc97980e4ff25c964c7bd3923d333d177aa4f7fb736b019f26c7cb41",
-                "sha256:b62c9157d36187eca799c378e572c969f0da87cd5fc42ca372d92cdb06e7e1de",
-                "sha256:c46a87b48213d7464f22d9a497b9eef8c1928b68320a2fa94240f969f6fec08c",
-                "sha256:c4d18b22701821de07bd6aea8b53d21449ec0ec5680645e5317062ea21817d2d"
-            ],
-            "markers": "python_version == '3.3'",
-            "version": "==3.4.3"
         },
         "certifi": {
             "hashes": [
@@ -98,6 +88,13 @@
             ],
             "version": "==2.6"
         },
+        "isodate": {
+            "hashes": [
+                "sha256:2e364a3d5759479cdb2d37cce6b9376ea504db2ff90252a2e5b7cc89cc9ff2d8",
+                "sha256:aa4d33c06640f5352aca96e4b81afd8ab3b47337cc12089822d6f322ac772c81"
+            ],
+            "version": "==0.6.0"
+        },
         "jinja2": {
             "hashes": [
                 "sha256:74c935a1b8bb9a3947c50a54766a969d4846290e1e788ea44c1392163723c3bd",
@@ -130,14 +127,6 @@
                 "sha256:2cd3b5ab35dbe542373d0e9feac1323c97e958dc0eb2467c2c8ec2f89bf35a79"
             ],
             "version": "==0.7.0"
-        },
-        "singledispatch": {
-            "hashes": [
-                "sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c",
-                "sha256:833b46966687b3de7f438c761ac475213e53b306740f1abfaa86e1d1aae56aa8"
-            ],
-            "markers": "python_version == '3.3'",
-            "version": "==3.4.0.3"
         },
         "six": {
             "hashes": [

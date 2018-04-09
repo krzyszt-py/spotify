@@ -1,9 +1,13 @@
+import config
+import isodate
 import json
 import requests
 import urllib
-import config
 
-def play(id="s2o4zxtqNZ4"):
+from typing import List
+
+
+def play(id: str) -> None:
     session = requests.sessions.Session()
     session.headers.update({'User-Agent': 'Mozilla/5.0'})
     r = session.get('https://togethertube.com/rooms/radio-wolny-direct')
@@ -18,10 +22,21 @@ def play(id="s2o4zxtqNZ4"):
     assert p.status_code == 201
 
 
-def search(q='The Red Thread Unravel (EA Games Soundtrack)'):
+def search(q: str) -> List[str]:
     r = requests.get('https://www.googleapis.com/youtube/v3/search',
                      params=f"q={urllib.parse.quote(q)}&maxResults=25&part=snippet&key={config.YOUR_API_KEY}")
-    print(r.status_code)
+    assert r.status_code == 200
     print(r.json())
 
-    return [v['id']['videoId'] for v in r.json()['items'] if 'videoId' in v['id']]
+    return [v['id']['videoId']
+            for v in r.json()['items']
+            if 'videoId' in v['id']
+            and not long_song(v['id']['videoId'])]
+
+
+def long_song(id: str) -> bool:
+    r = requests.get('https://www.googleapis.com/youtube/v3/videos',
+                     params=f'id={urllib.parse.quote(id)}&part=contentDetails&key={config.YOUR_API_KEY}')
+    assert r.status_code == 200
+
+    return isodate.parse_duration(r.json()['items'][0]['contentDetails']['duration']).total_seconds() > 15 * 60
