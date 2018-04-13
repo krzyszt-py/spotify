@@ -6,12 +6,23 @@ from sanic import Sanic
 from sanic.response import text as response_text
 from sanic_jinja2 import SanicJinja2
 
+import config
 import radio
 
 app = Sanic(__name__)
 jinja = SanicJinja2(app)
 app.proxy_listen: adbus.client.Proxy
 app.proxy: adbus.client.Proxy
+
+
+async def track_changed_handler(_a: str, metadata: Dict[str, Any], _c: List[str]):
+    pprint(metadata)
+    metadata = metadata['Metadata']
+    if app.playing == metadata['mpris:trackid']:
+        return
+    app.playing = metadata['mpris:trackid']
+    search = radio.search(f"{metadata['xesam:album']} {metadata['xesam:title']}")
+    radio.play(search[0])
 
 
 @app.listener('before_server_start')
@@ -32,21 +43,7 @@ async def setup_dbus(app, _loop):
     await app.proxy.update()
     await app.proxy_listen.update()
 
-    async def local_method(_a: str, metadata: Dict[str, Any], _c: List[str]):
-        pprint(metadata)
-        metadata = metadata['Metadata']
-        if app.playing == metadata['mpris:trackid']:
-            return
-        app.playing = metadata['mpris:trackid']
-        search = radio.search(f"{metadata['xesam:album']} {metadata['xesam:title']}")
-        pprint(search)
-        radio.play(search[0])
-
-        # TODO:
-        # - radio.search(title)
-        # - radio.play(youtube_id)
-
-    app.proxy_listen.PropertiesChanged(local_method)
+    app.proxy_listen.PropertiesChanged(track_changed_handler)
 
 
 @app.route('/play')
@@ -77,4 +74,4 @@ async def index(_r):
     return response_text('', 204)
 
 
-app.run(debug=True, port=3564)
+app.run(port=config.PORT)

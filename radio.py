@@ -39,4 +39,4 @@ def long_song(id: str) -> bool:
                      params=f'id={urllib.parse.quote(id)}&part=contentDetails&key={config.YOUR_API_KEY}')
     assert r.status_code == 200
 
-    return isodate.parse_duration(r.json()['items'][0]['contentDetails']['duration']).total_seconds() > 15 * 60
+    return isodate.parse_duration(r.json()['items'][0]['contentDetails']['duration']).total_seconds() > config.LONG_SONG
