@@ -22,16 +22,24 @@ def play(id: str) -> None:
     assert p.status_code == 201
 
 
-def search(q: str) -> List[str]:
+def search(q: str, lenght: float) -> List[str]:
     r = requests.get('https://www.googleapis.com/youtube/v3/search',
                      params=f"q={urllib.parse.quote(q)}&maxResults=25&part=snippet&key={config.YOUR_API_KEY}")
     assert r.status_code == 200
     print(r.json())
 
-    return [v['id']['videoId']
-            for v in r.json()['items']
-            if 'videoId' in v['id']
-            and not long_song(v['id']['videoId'])]
+    ids = [v['id']['videoId']
+           for v in r.json()['items']
+           if 'videoId' in v['id']]
+    ids = ','.join(ids)
+    r = requests.get('https://www.googleapis.com/youtube/v3/videos',
+                     params=f'id={urllib.parse.quote(ids)}&part=contentDetails&key={config.YOUR_API_KEY}')
+    assert r.status_code == 200
+    info = r.json()
+    lenghts = {item['id']: isodate.parse_duration(item['contentDetails']['duration']).total_seconds()
+               for item in info['items']}
+
+    return sorted(lenghts, key=lambda id: abs(lenghts[id] - lenght))
 
 
 def long_song(id: str) -> bool:
@@ -40,3 +48,13 @@ def long_song(id: str) -> bool:
     assert r.status_code == 200
 
     return isodate.parse_duration(r.json()['items'][0]['contentDetails']['duration']).total_seconds() > config.LONG_SONG
+
+
+def ws():
+    wss = 'wss://togethertube.com/websocket/rooms/radio-wolny-direct'
+    from websocket import create_connection
+    ws = create_connection(wss)
+    ws.send(json.dumps({"op": "addr_sub", "addr": "dogecoin_address"}))
+    result = ws.recv()
+    print(result)
+    ws.close()

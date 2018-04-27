@@ -21,7 +21,8 @@ async def track_changed_handler(_a: str, metadata: Dict[str, Any], _c: List[str]
     if app.playing == metadata['mpris:trackid']:
         return
     app.playing = metadata['mpris:trackid']
-    search = radio.search(f"{metadata['xesam:album']} {metadata['xesam:title']}")
+    search = radio.search(f"{metadata['xesam:album']} {metadata['xesam:title']}",
+                          metadata['mpris:length'] // 1_000_000)
     radio.play(search[0])
 
 
